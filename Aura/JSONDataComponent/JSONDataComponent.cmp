@@ -1,0 +1,120 @@
+<aura:component controller="JSONGeneratorForLightningComponent" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" access="global">
+    <!-- Handler to call function when page is loaded initially -->
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <!-- Attribute to store JSON Object data -->
+    <aura:attribute name="Parentchecked" type="boolean" default="false"/>
+    <aura:attribute name="JSONAttribute"  type="List" default="[]" />
+    <aura:attribute name="oldJSONAttribute"  type="List" default="[]" />
+    <aura:attribute name="selectedRowData" type="List"/>
+    <aura:attribute name="removedIndexes" type="List"/>
+    <aura:attribute name="TotalRecords" type="integer" default="0"/>
+    <aura:attribute name="Totalbalance" type="integer" default="0"/>
+    <div class="slds-grid slds-wrap">
+        <div class="slds-col slds-size_12-of-12">
+            
+            <div class="slds-grid slds-wrap">
+                <div class="slds-col slds-size_12-of-12">
+                    
+                    <div class="slds-col slds-size_1-of-12"></div>
+                    <div class="slds-col slds-size_12-of-12"> 
+                        <table class="slds-table slds-table--bordered slds-table--cell-buffer">
+                            <thead>
+                                <tr class="slds-text-title--caps">
+                                    <th style="width:3.25rem;" class="slds-text-align--right">
+                                        <div class="slds-form-element">
+                                            <div class="slds-form-element__control">
+                                                <label class="slds-checkbox">
+                                                    <!--header checkbox for select all-->
+                                                    <lightning:input type="checkbox" label="" aura:id="box3" onchange="{!c.selectAll}" checked="{!v.Parentchecked}"/>
+                                                    <!--<ui:inputCheckbox aura:id="box3" change="{!c.selectAll}"/>
+                                                    <span class="slds-checkbox-faux"></span>
+                                                    <span class="slds-form-element__label text"></span>-->
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th scope="col">
+                                        <div class="slds-truncate" title="Creater">Creditor</div>
+                                    </th>
+                                    <th scope="col">
+                                        <div class="slds-truncate" title="First Name">First Name</div>
+                                    </th>
+                                    <th scope="col">
+                                        <div class="slds-truncate" title="Last Name">Last Name</div>
+                                    </th>
+                                    <th scope="col">
+                                        <div class="slds-truncate" title="Min Pay%">Min Pay%</div>
+                                    </th>
+                                    <th scope="col">
+                                        <div class="slds-truncate" title="Balance">Balance</div>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <aura:iteration items="{!v.JSONAttribute}" var="jsnVal" indexVar="index">
+                                    <tr>
+                                        <td scope="row" class="slds-text-align--right" style="width:3.25rem;">
+                                            <div class="slds-form-element">
+                                                <div class="slds-form-element__control">
+                                                    <label class="slds-checkbox">
+                                                        <lightning:input type="checkbox" aura:id="boxPack" onchange="{!c.handleSelectedRow}" name="{!index+'_'+jsnVal.id+'_jsonChk'}"/>
+                                                    	
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td scope="row" data-label="Creditor Name">
+                                            <lightning:input type="text" value="{! jsnVal.id }" style="display:none;"/>
+                                            <lightning:input type="text" value="{! jsnVal.creditorName }" name="{!index+'_'+jsnVal.id+'_jsonCN'}"/>
+                                        </td>
+                                        <td scope="row" data-label="First Name">
+                                            <lightning:input type="text" value="{! jsnVal.firstName }" name="{!index+'_'+jsnVal.id+'_jsonFN'}"/>
+                                        </td>
+                                        <td data-label="Last Name">
+                                            <lightning:input type="text" value="{! jsnVal.lastName }"  name="{!index+'_'+jsnVal.id+'_jsoLN'}"/>
+                                        </td>
+                                        <td data-label="Email">
+                                            <lightning:input type="number" value="{! jsnVal.minPaymentPercentage }" name="{!index+'_'+jsnVal.id+'_jsonMP'}" />
+                                        </td>
+                                        <td data-label="Balance">
+                                            <lightning:input type="number" value="{! jsnVal.balance }" name="{!index+'_'+jsnVal.id+'_jsonBAL'}" />
+                                        </td>
+                                    </tr>
+                                </aura:iteration>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="slds-grid  slds-size_12-of-12 slds-m-top_medium backgroundStyle">
+                        <div class="slds-col slds-size_1-of-12"></div>
+                        <div class="slds-col slds-grid custom-box slds-grid_align-spread  slds-size_10-of-12">  <b>Total Balance :&nbsp;&nbsp;</b>
+                            <div class=""> <ui:outputText value="{!v.Totalbalance}"/></div></div>
+                        
+                        
+                    </div>
+                    <div class="slds-col slds-grid slds-size_12-of-12 slds-m-top_medium slds-grid_align-spread">
+                        <div class="slds-grid">
+                            <div class="slds-p-bottom_small">
+                                <h1 class="slds-page-header__title"> 
+                                    <lightning:button variant="brand" label="Add Debt" onclick="{!c.addDebt}"/>
+                                </h1>
+                            </div>
+                            <div class="slds-p-bottom_small slds-p-bottom_small slds-p-left_large">
+                                <lightning:button variant="destructive" label="Remove Debt" onclick = "{!c.removeDebt}"/>
+                            </div>
+                        </div>
+                        <div class="slds-p-bottom_small">
+                            <h1 class="slds-page-header__title"> 
+                                <lightning:button variant="brand" label="Add Row" onclick="{!c.addRow}"/>
+                            </h1>
+                        </div>
+                    </div>
+                    
+                    <div class="slds-grid slds-size_12-of-12">
+                        <div class="custom-box totalrow slds-size_1-of-2">  <b>Total Row Count :&nbsp;&nbsp;</b> <ui:outputText value="{!v.JSONAttribute.length}"/></div>
+                    	<div class="custom-box totalrow slds-size_1-of-2">  <b>Checked Row Count :&nbsp;&nbsp;</b> <ui:outputText value="{!v.selectedRowData.length}"/></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</aura:component>
